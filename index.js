@@ -26,7 +26,7 @@ async function run() {
     if (content.startsWith(reviewPrComment)) {
         // Get the content of the pull request
         if (!code) {
-            response = await axios.get(issue.pull_request.diff_url);
+            const response = await axios.get(issue.pull_request.diff_url);
             code = response.data;
         }
     
@@ -38,7 +38,7 @@ async function run() {
     if (programmingLanguage == 'auto') {
         // Get the content of the pull request
         if (!code) {
-            response = await axios.get(issue.pull_request.diff_url);
+            const response = await axios.get(issue.pull_request.diff_url);
             code = response.data;
         }
         const detectedLanguage = detect(code);
