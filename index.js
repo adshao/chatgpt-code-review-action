@@ -3,6 +3,15 @@ const github = require('@actions/github');
 const axios = require('axios');
 const detect = require('language-detect');
 
+async function getPrCode(repoOwner, repoName, prNumber) {
+    const response = await github.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
+        headers: {
+            'accept': 'application/vnd.github.v3+json'
+        }
+    });
+    return response.data.body;
+}
+
 async function run() {
   try {
     // Get input values
@@ -27,12 +36,7 @@ async function run() {
     if (content.startsWith(reviewPrComment)) {
         // Get the content of the pull request
         if (!code) {
-            response = await github.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
-                headers: {
-                    'accept': 'application/vnd.github.v3+json'
-                }
-            });
-            code = response.data.body;
+            code = await getPrCode(repoOwner, repoName, prNumber);
         }
     
         // Extract the code from the pull request content
@@ -43,12 +47,7 @@ async function run() {
     if (!programmingLanguage) {
         // Get the content of the pull request
         if (!code) {
-            response = await github.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
-                headers: {
-                    'accept': 'application/vnd.github.v3+json'
-                }
-            });
-            code = response.data.body;
+            code = await getPrCode(repoOwner, repoName, prNumber);
         }
         const detectedLanguage = detect(code);
         core.debug(`Detected programming language: ${detectedLanguage}`);
