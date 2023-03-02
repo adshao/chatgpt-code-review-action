@@ -1,5 +1,5 @@
 name: OpenAI ChatGPT Code Review
-description: A GitHub Action that uses OpenAI ChatGPT to analyze code in pull request review comments.
+description: A GitHub Action that uses OpenAI ChatGPT to review code in pull request.
 inputs:
   LANGUAGE:
     description: 'The response language of the OpenAI ChatGPT API. Default is "English".'
