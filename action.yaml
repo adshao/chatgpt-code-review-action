@@ -15,3 +15,6 @@ inputs:
     required: true
 outputs:
   None
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
