@@ -3,6 +3,11 @@ const github = require('@actions/github');
 const axios = require('axios');
 const detect = require('language-detect');
 
+async function getPrCode(url) {
+    const response = await axios.get(url);
+    return response.data;
+}
+
 async function run() {
   try {
     // Get input values
@@ -30,8 +35,7 @@ async function run() {
     if (content == fullReviewComment) {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url);
-            code = response.data;
+            code = getPrCode(issue.pull_request.diff_url);
         }
     
         // Extract the code from the pull request content
@@ -44,8 +48,7 @@ async function run() {
     if (programmingLanguage == 'auto') {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url);
-            code = response.data;
+            code = getPrCode(issue.pull_request.diff_url);
         }
         const detectedLanguage = detect(code);
         core.debug(`Detected programming language: ${detectedLanguage}`);
