@@ -1,0 +1,18 @@
+name: Code Review
+
+on:
+  pull_request_review:
+    types: [submitted, edited]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    if: github.event.review.user.login == 'adshao'
+    steps:
+    - name: OpenAI ChatGPT Code Review
+      uses: ./
+      with:
+        LANGUAGE: 'English'
+        PROGRAMMING_LANGUAGE: 'JavaScript'
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        REVIEW_PR_COMMENT: 'ai review please'

@@ -37,20 +37,20 @@ Here's an example workflow that uses this action to analyze code in pull request
 name: Code Review
 
 on:
-    pull_request_review:
-        types: [submitted, edited]
+  pull_request_review:
+    types: [submitted, edited]
 
 jobs:
-    code-review:
-        runs-on: ubuntu-latest
-        steps:
-        - name: OpenAI ChatGPT Code Review
-          uses: <username>/<repository>@<version>
-          with:
-            LANGUAGE: 'English'
-            PROGRAMMING_LANGUAGE: 'JavaScript'
-            OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-            REVIEW_PR_COMMENT: 'ai review please'
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+    - name: OpenAI ChatGPT Code Review
+      uses: <username>/<repository>@<version>
+      with:
+        LANGUAGE: 'English'
+        PROGRAMMING_LANGUAGE: 'JavaScript'
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        REVIEW_PR_COMMENT: 'ai review please'
 ```
 
 
