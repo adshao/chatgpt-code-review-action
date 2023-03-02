@@ -37655,6 +37655,11 @@ const github = __nccwpck_require__(183);
 const axios = __nccwpck_require__(73565);
 const detect = __nccwpck_require__(46397);
 
+async function getPrCode(url) {
+    const response = await axios.get(url);
+    return response.data;
+}
+
 async function run() {
   try {
     // Get input values
@@ -37664,27 +37669,21 @@ async function run() {
     const reviewPrComment = core.getInput('REVIEW_PR_COMMENT');
 
     // Get information about the pull request review
-    const pullRequest = github.context.payload.pull_request;
+    const issue = github.context.payload.issue;
     const comment = github.context.payload.comment;
     const repoName = github.context.payload.repository.name;
     const repoOwner = github.context.payload.repository.owner.login;
-    const sha = pullRequest.head.sha;
-    const prNumber = pullRequest.number;
+    const prNumber = issue.number;
 
     // Get the code to analyze from the review comment
-    const content = comment.body;
+    var content = comment.body;
 
     var code;
 
     if (content.startsWith(reviewPrComment)) {
         // Get the content of the pull request
         if (!code) {
-            response = await github.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
-                headers: {
-                    'accept': 'application/vnd.github.v3+json'
-                }
-            });
-            code = response.data.body;
+            code = await getPrCode(issue.pull_request.diff_url);
         }
     
         // Extract the code from the pull request content
@@ -37692,15 +37691,10 @@ async function run() {
     }
 
     // Determine the programming language if it was not provided
-    if (!programmingLanguage) {
+    if (programmingLanguage == 'auto') {
         // Get the content of the pull request
         if (!code) {
-            response = await github.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
-                headers: {
-                    'accept': 'application/vnd.github.v3+json'
-                }
-            });
-            code = response.data.body;
+            code = await getPrCode(issue.pull_request.diff_url);
         }
         const detectedLanguage = detect(code);
         core.debug(`Detected programming language: ${detectedLanguage}`);
@@ -37729,8 +37723,9 @@ async function run() {
     });
 
     // Reply to the review comment with the OpenAI response
-    await github.request(`POST /repos/${repoOwner}/${repoName}/pulls/${prNumber}/comments`, {
-      body: response.data.choices[0].text
+    await github.request(`POST /repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`, {
+      body: response.data.choices[0].text,
+      in_reply_to: comment.id
     });
   } catch (error) {
     core.setFailed(error.message);
