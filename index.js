@@ -9,7 +9,8 @@ async function run() {
     const language = core.getInput('LANGUAGE');
     const programmingLanguage = core.getInput('PROGRAMMING_LANGUAGE');
     const openaiToken = core.getInput('OPENAI_TOKEN');
-    const reviewPrComment = core.getInput('REVIEW_PR_COMMENT');
+    const fullReviewComment = core.getInput('FULL_REVIEW_COMMENT');
+    const reviewCommentPrefix = core.getInput('REVIEW_COMMENT_PREFIX');
     const githubToken = core.getInput('GITHUB_TOKEN');
 
     // Get information about the pull request review
@@ -26,7 +27,7 @@ async function run() {
 
     core.debug(`openaiToken length: ${openaiToken.length}`);
 
-    if (content.startsWith(reviewPrComment)) {
+    if (content == fullReviewComment) {
         // Get the content of the pull request
         if (!code) {
             const response = await axios.get(issue.pull_request.diff_url);
@@ -35,6 +36,8 @@ async function run() {
     
         // Extract the code from the pull request content
         content = `Please anayze the code of the pull request, tell me if the change is good and explain the reason in ${language}:\n\n\`\`\`${code}\`\`\``;
+    } else {
+        content = content.substring(reviewCommentPrefix.length);
     }
 
     // Determine the programming language if it was not provided
@@ -57,7 +60,7 @@ async function run() {
         content: content
     }];
 
-    core.debug(`messages: ${messages}`);
+    core.debug(`content: ${content}`);
 
     // Call the OpenAI ChatGPT API to analyze the code
     const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -78,7 +81,7 @@ async function run() {
         owner: repoOwner,
         repo: repoName,
         issue_number: prNumber,
-        body: "ChatGPT: ".concat(response.data.choices[0].message.content),
+        body: "ChatGPT Code Review: ".concat(response.data.choices[0].message.content)
         // in_reply_to: comment.id
       });
   } catch (error) {

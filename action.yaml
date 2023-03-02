@@ -7,9 +7,12 @@ inputs:
   PROGRAMMING_LANGUAGE:
     description: 'The programming language of the code in the GitHub repository. If not provided,the detected programming language will be used.'
     default: ''
-  REVIEW_PR_COMMENT:
-    description: 'The comment to trigger code review for the whole pull request.'
-    default: 'ai review please'
+  FULL_REVIEW_COMMENT:
+    description: 'The comment to trigger code review for the pull request.'
+    default: 'chatgpt'
+  REVIEW_COMMENT_PREFIX:
+    description: 'The comment prefix to trigger code review with the comment content.'
+    default: 'chatgpt:'
   OPENAI_TOKEN:
     description: 'The API token for the OpenAI ChatGPT API.'
     required: true

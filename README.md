@@ -13,7 +13,9 @@ with:
     LANGUAGE: 'English'
     PROGRAMMING_LANGUAGE: 'JavaScript'
     OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-    REVIEW_PR_COMMENT: 'ai review please'
+    GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    FULL_REVIEW_COMMENT: 'chatgpt'
+    REVIEW_COMMENT_PREFIX: 'chatgpt:'
 ```
 
 ## Inputs
@@ -23,7 +25,9 @@ This action accepts the following inputs:
 - `LANGUAGE` (optional): The response language of the OpenAI ChatGPT API. Default is "en".
 - `PROGRAMMING_LANGUAGE` (optional): The programming language of the code in the GitHub repository. If not provided, the detected programming language will be used.
 - `OPENAI_TOKEN` (required): The API token for the OpenAI ChatGPT API.
-- `REVIEW_PR_COMMENT` (optional): The comment to trigger code review for the whole pull request.
+- `GITHUB_TOKEN` (required): The API token for the Github API.
+- `FULL_REVIEW_COMMENT` (required): The comment to trigger code review for the pull request.
+- `REVIEW_COMMENT_PREFIX` (required): The comment prefix to trigger code review with the comment content.
 
 ## Outputs
 
@@ -37,24 +41,32 @@ Here's an example workflow that uses this action to analyze code in pull request
 name: Code Review
 
 on:
-  pull_request_review:
-    types: [submitted, edited]
+  issue_comment:
+    types: [created, edited]
 
 jobs:
   code-review:
     runs-on: ubuntu-latest
+    if: |
+      github.event.comment.user.login == 'adshao' &&
+      github.event.comment.body.startsWith('chatgpt:')
     steps:
     - name: OpenAI ChatGPT Code Review
-      uses: <username>/<repository>@<version>
+      uses: adshao/chatgpt-code-review-action@v1
       with:
         LANGUAGE: 'English'
         PROGRAMMING_LANGUAGE: 'JavaScript'
         OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-        REVIEW_PR_COMMENT: 'ai review please'
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        FULL_REVIEW_COMMENT: 'chatgpt'
+        REVIEW_COMMENT_PREFIX: 'chatgpt:'
 ```
 
+This workflow runs the `OpenAI ChatGPT Code Review` action when a pull request comment is created or edited. The action uses the `LANGUAGE`, `PROGRAMMING_LANGUAGE`, `FULL_REVIEW_COMMENT`, `REVIEW_COMMENT_PREFIX`, `OPENAI_TOKEN` and `GITHUB_TOKEN` input values to analyze the code in the pull request comment.
 
-This workflow runs the `OpenAI ChatGPT Code Review` action when a pull request review is submitted or edited. The action uses the `LANGUAGE`, `PROGRAMMING_LANGUAGE`, `REVIEW_PR_COMMENT` and `OPENAI_TOKEN` input values to analyze the code in the pull request review comment.
+* If the comment starts with `chatgpt:` and is sent by `adshao`, the workflow will be triggered.
+
+* If the comment is exactly `chatgpt`, it will trigger a code review for the diff of the pull request.
 
 ## License
 

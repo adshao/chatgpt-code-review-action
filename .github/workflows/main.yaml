@@ -7,7 +7,9 @@ on:
 jobs:
   code-review:
     runs-on: ubuntu-latest
-    if: github.event.comment.user.login == 'adshao'
+    if: |
+      github.event.comment.user.login == 'adshao' &&
+      github.event.comment.body.startsWith('chatgpt:')
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -17,6 +19,7 @@ jobs:
       with:
         LANGUAGE: 'English'
         PROGRAMMING_LANGUAGE: 'JavaScript'
+        REVIEW_COMMENT_PREFIX: 'chatgpt:'
+        FULL_REVIEW_COMMENT: 'chatgpt'
         OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-        REVIEW_PR_COMMENT: 'ai review please'
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
