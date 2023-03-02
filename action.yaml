@@ -13,6 +13,9 @@ inputs:
   OPENAI_TOKEN:
     description: 'The API token for the OpenAI ChatGPT API.'
     required: true
+  GITHUB_TOKEN:
+    description: 'The API token for the Github API.'
+    required: true
 runs:
   using: 'node16'
   main: 'dist/index.js'

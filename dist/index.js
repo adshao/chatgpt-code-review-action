@@ -37667,6 +37667,7 @@ async function run() {
     const programmingLanguage = core.getInput('PROGRAMMING_LANGUAGE');
     const openaiToken = core.getInput('OPENAI_TOKEN');
     const reviewPrComment = core.getInput('REVIEW_PR_COMMENT');
+    const githubToken = core.getInput('GITHUB_TOKEN');
 
     // Get information about the pull request review
     const issue = github.context.payload.issue;
@@ -37679,6 +37680,8 @@ async function run() {
     var content = comment.body;
 
     var code;
+
+    core.debug(`openaiToken length: ${openaiToken.length}`);
 
     if (content.startsWith(reviewPrComment)) {
         // Get the content of the pull request
@@ -37722,11 +37725,17 @@ async function run() {
       }
     });
 
+    core.debug(`openai response: ${response.data.choices[0].message.content}`);
+
     // Reply to the review comment with the OpenAI response
-    await github.request(`POST /repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`, {
-      body: response.data.choices[0].text,
-      in_reply_to: comment.id
-    });
+    const octokit = github.getOctokit(githubToken);
+    await octokit.rest.issues.createComment({
+        owner: repoOwner,
+        repo: repoName,
+        issue_number: prNumber,
+        body: "ChatGPT: ".concat(response.data.choices[0].message.content),
+        // in_reply_to: comment.id
+      });
   } catch (error) {
     core.setFailed(error.message);
   }
