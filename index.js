@@ -23,6 +23,8 @@ async function run() {
 
     var code;
 
+    core.debug(`openaiToken length: ${openaiToken.length}`);
+
     if (content.startsWith(reviewPrComment)) {
         // Get the content of the pull request
         if (!code) {
@@ -66,6 +68,8 @@ async function run() {
         'Authorization': `Bearer ${openaiToken}`
       }
     });
+
+    core.debug(`openai response: ${response.data.choices[0].text}`);
 
     // Reply to the review comment with the OpenAI response
     await github.request(`POST /repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`, {
