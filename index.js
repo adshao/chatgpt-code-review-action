@@ -12,6 +12,7 @@ async function run() {
     const reviewPrComment = core.getInput('REVIEW_PR_COMMENT');
 
     // Get information about the pull request review
+    core.debug(`${github.context.payload}`);
     const pullRequest = github.context.payload.pull_request;
     const comment = github.context.payload.comment;
     const repoName = github.context.payload.repository.name;
