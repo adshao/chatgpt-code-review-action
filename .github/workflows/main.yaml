@@ -7,7 +7,7 @@ on:
 jobs:
   code-review:
     runs-on: ubuntu-latest
-    if: github.event.review.user.login == 'adshao'
+    # if: github.event.review.user.login == 'adshao'
     steps:
     - name: OpenAI ChatGPT Code Review
       uses: ./
