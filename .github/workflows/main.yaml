@@ -7,7 +7,7 @@ on:
 jobs:
   code-review:
     runs-on: ubuntu-latest
-    # if: github.event.review.user.login == 'adshao'
+    if: github.event.comment.user.login == 'adshao'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -19,3 +19,4 @@ jobs:
         PROGRAMMING_LANGUAGE: 'JavaScript'
         OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
         REVIEW_PR_COMMENT: 'ai review please'
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
