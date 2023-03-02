@@ -37671,7 +37671,7 @@ async function run() {
     const prNumber = issue.number;
 
     // Get the code to analyze from the review comment
-    const content = comment.body;
+    var content = comment.body;
 
     var code;
 
