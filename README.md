@@ -47,9 +47,7 @@ on:
 jobs:
   code-review:
     runs-on: ubuntu-latest
-    if: |
-      github.event.comment.user.login == 'adshao' &&
-      ${{ startsWith(github.event.comment.body, 'chatgpt') }} == 'true'
+    if: github.event.comment.user.login == 'adshao' && startsWith(github.event.comment.body, 'chatgpt')
     steps:
     - name: OpenAI ChatGPT Code Review
       uses: adshao/chatgpt-code-review-action@main
