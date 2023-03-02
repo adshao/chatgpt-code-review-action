@@ -81,7 +81,7 @@ async function run() {
         owner: repoOwner,
         repo: repoName,
         issue_number: prNumber,
-        body: "ChatGPT Code Review: ".concat(response.data.choices[0].message.content)
+        body: "Code Review: ".concat(response.data.choices[0].message.content)
         // in_reply_to: comment.id
       });
   } catch (error) {
