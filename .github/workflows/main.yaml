@@ -6,11 +6,13 @@ on:
 
 jobs:
   code-review:
-    if: |
-      github.event.comment.user.login == 'adshao' &&
-      ${{ startsWith(github.event.comment.body, 'chatgpt') }}
+    if: github.event.comment.user.login == 'adshao' && startsWith(github.event.comment.body, 'chatgpt')
     runs-on: ubuntu-latest
     steps:
+    - name: Debug 1
+      run: echo ${{ github.event.comment.user.login == 'adshao' }}
+    - name: Debug 2
+      run: echo ${{ startsWith(github.event.comment.body, 'chatgpt') == 'true' }}
     - name: Checkout
       uses: actions/checkout@v3
     - uses: hmarr/debug-action@v2

@@ -49,10 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event.comment.user.login == 'adshao' &&
-      github.event.comment.body.startsWith('chatgpt:')
+      ${{ startsWith(github.event.comment.body, 'chatgpt') }} == 'true'
     steps:
     - name: OpenAI ChatGPT Code Review
-      uses: adshao/chatgpt-code-review-action@v1
+      uses: adshao/chatgpt-code-review-action@main
       with:
         LANGUAGE: 'English'
         PROGRAMMING_LANGUAGE: 'JavaScript'
