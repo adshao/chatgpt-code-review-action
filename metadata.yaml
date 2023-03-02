@@ -1,0 +1,17 @@
+name: OpenAI ChatGPT Code Review
+description: A GitHub Action that uses OpenAI ChatGPT to analyze code in pull request review comments.
+inputs:
+  LANGUAGE:
+    description: 'The response language of the OpenAI ChatGPT API. Default is "English".'
+    default: 'English'
+  PROGRAMMING_LANGUAGE:
+    description: 'The programming language of the code in the GitHub repository. If not provided,the detected programming language will be used.'
+    default: ''
+  REVIEW_PR_COMMENT:
+    description: 'The comment to trigger code review for the whole pull request.'
+    default: 'ai review please'
+  OPENAI_TOKEN:
+    description: 'The API token for the OpenAI ChatGPT API.'
+    required: true
+outputs:
+  None

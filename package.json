@@ -1,0 +1,23 @@
+{
+  "name": "chatgpt-code-review-action",
+  "version": "0.0.1",
+  "description": "A GitHub Action that uses OpenAI ChatGPT to review code",
+  "main": "index.js",
+  "keywords": [
+    "github",
+    "action",
+    "openai",
+    "chatgpt",
+    "code",
+    "review"
+  ],
+  "dependencies": {
+    "language-detect": "1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adshao/chagGPT-code-review-action.git"
+  },
+  "author": "Adam Shao",
+  "license": "MIT"
+}
