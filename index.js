@@ -13,14 +13,14 @@ async function run() {
 
     // Get information about the pull request review
     const pullRequest = github.context.payload.pull_request;
-    const review = github.context.payload.review;
+    const comment = github.context.payload.comment;
     const repoName = github.context.payload.repository.name;
     const repoOwner = github.context.payload.repository.owner.login;
     const sha = pullRequest.head.sha;
     const prNumber = pullRequest.number;
 
     // Get the code to analyze from the review comment
-    const content = review.body;
+    const content = comment.body;
 
     var code;
 
@@ -77,7 +77,7 @@ async function run() {
     });
 
     // Reply to the review comment with the OpenAI response
-    await github.request(`POST /repos/${repoOwner}/${repoName}/pulls/${prNumber}/reviews/${review.id}/comments`, {
+    await github.request(`POST /repos/${repoOwner}/${repoName}/pulls/${prNumber}/comments`, {
       body: response.data.choices[0].text
     });
   } catch (error) {
