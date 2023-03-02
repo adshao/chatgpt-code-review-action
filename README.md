@@ -8,7 +8,7 @@ To use this action in your workflow, add the following step:
 
 ```yaml
 name: OpenAI ChatGPT Code Review
-uses: adshao/chatgpt-code-review-aciton@v1
+uses: adshao/chatgpt-code-review-action@v0.1
 with:
     LANGUAGE: 'English'
     PROGRAMMING_LANGUAGE: 'JavaScript'
