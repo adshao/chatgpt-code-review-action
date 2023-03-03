@@ -2,6 +2,18 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
 const detect = require('language-detect');
+const httpsProxyAgent = require('https-proxy-agent');
+
+function configWithProxy(url) {
+    if (process.env.HTTPS_PROXY) {
+        return {
+            url: url,
+            proxy: false,
+            httpsAgent: new httpsProxyAgent(process.env.HTTPS_PROXY)
+        }
+    }
+    return url;
+}
 
 async function run() {
   try {
@@ -30,7 +42,7 @@ async function run() {
     if (content == fullReviewComment) {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url);
+            const response = await axios.get(configWithProxy(issue.pull_request.diff_url));
             code = response.data;
         }
     
@@ -44,7 +56,7 @@ async function run() {
     if (programmingLanguage == 'auto') {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url);
+            const response = await axios.get(configWithProxy(issue.pull_request.diff_url));
             code = response.data;
         }
         const detectedLanguage = detect(code);
@@ -63,7 +75,7 @@ async function run() {
     core.debug(`content: ${content}`);
 
     // Call the OpenAI ChatGPT API to analyze the code
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+    const response = await axios.post(configWithProxy('https://api.openai.com/v1/chat/completions'), {
         "model": "gpt-3.5-turbo",
         "messages": messages
     }, {
