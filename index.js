@@ -47,7 +47,7 @@ async function run() {
         }
     
         // Extract the code from the pull request content
-        content = `Please anayze the code of the pull request, tell me if the change is good and explain the reason in ${language}:\n\n\`\`\`${code}\`\`\``;
+        content = `Please anayze the code of the pull request, tell me if the change is good or is there a bug and explain the reason in ${language}:\n\n\`\`\`${code}\`\`\``;
     } else {
         content = content.substring(reviewCommentPrefix.length);
     }
