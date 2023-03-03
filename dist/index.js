@@ -39214,14 +39214,23 @@ async function run() {
     const maxCodeLength = core.getInput('MAX_CODE_LENGTH');
     const answerTemplate = core.getInput('ANSWER_TEMPLATE');
 
+    core.debug(`language: ${language}`);
+    core.debug(`programmingLanguage: ${programmingLanguage}`);
+    core.debug(`openaiToken length: ${openaiToken.length}`);
+    core.debug(`fullReviewComment: ${fullReviewComment}`);
+    core.debug(`reviewCommentPrefix: ${reviewCommentPrefix}`);
+    core.debug(`githubToken length: ${githubToken.length}`);
+    core.debug(`githubBaseURL: ${githubBaseURL}`);
+    core.debug(`promptTemplate: ${promptTemplate}`);
+    core.debug(`maxCodeLength: ${maxCodeLength}`);
+    core.debug(`answerTemplate: ${answerTemplate}`);
+
     // Get information about the pull request review
     const issue = github.context.payload.issue;
     const comment = github.context.payload.comment;
     const repoName = github.context.payload.repository.name;
     const repoOwner = github.context.payload.repository.owner.login;
     const prNumber = issue.number;
-
-    core.debug(`openaiToken length: ${openaiToken.length}`);
 
     // Get the code to analyze from the review comment
     var content = comment.body;
