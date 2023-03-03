@@ -27,7 +27,7 @@ inputs:
     type: int
   PROMPT_TEMPLATE:
     description: 'The template for the FULL_REVIEW_COMMENT prompt.'
-    default: 'Please analyze the pull request's code and inform me whether it requires optimization, and provide a ${language} explanation for your decision:\n\n\```${code}```'
+    default: 'Please analyze the pull request\'s code and inform me whether it requires optimization, and provide a ${language} explanation for your decision:\n\n\```${code}```'
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
     default: 'AI Code Review:\n\n${answer}'
