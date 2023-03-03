@@ -32,7 +32,9 @@ inputs:
 \`\`\`${code}\`\`\`'
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
-    default: 'AI Code Review:\n\n${answer}'
+    default: 'AI Code Review:
+
+${answer}'
 
 runs:
   using: 'node16'
