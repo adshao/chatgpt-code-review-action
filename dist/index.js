@@ -39191,12 +39191,13 @@ const detect = __nccwpck_require__(46397);
 const httpsProxyAgent = __nccwpck_require__(81908);
 
 function configWithProxy(config) {
+    var c = config || {};
     if (process.env.HTTPS_PROXY) {
-        config.proxy = false;
-        config.httpsAgent = new httpsProxyAgent(process.env.HTTPS_PROXY);
-        return config;
+        c.proxy = false;
+        c.httpsAgent = new httpsProxyAgent(process.env.HTTPS_PROXY);
+        return c;
     }
-    return config || {};
+    return c;
 }
 
 async function run() {
@@ -39208,6 +39209,10 @@ async function run() {
     const fullReviewComment = core.getInput('FULL_REVIEW_COMMENT');
     const reviewCommentPrefix = core.getInput('REVIEW_COMMENT_PREFIX');
     const githubToken = core.getInput('GITHUB_TOKEN');
+    const githubBaseURL = core.getInput('GITHUB_BASE_URL') || process.env.GITHUB_API_URL;
+    const promptTemplate = core.getInput('PROMPT_TEMPLATE');
+    const maxCodeLength = core.getInput('MAX_CODE_LENGTH');
+    const answerTemplate = core.getInput('ANSWER_TEMPLATE');
 
     // Get information about the pull request review
     const issue = github.context.payload.issue;
@@ -39216,33 +39221,43 @@ async function run() {
     const repoOwner = github.context.payload.repository.owner.login;
     const prNumber = issue.number;
 
+    core.debug(`openaiToken length: ${openaiToken.length}`);
+
     // Get the code to analyze from the review comment
     var content = comment.body;
 
-    var code;
-
-    core.debug(`openaiToken length: ${openaiToken.length}`);
+    const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
+    var response = await axios.get(url, configWithProxy({
+        headers: {
+            Authorization: `Bearer ${githubToken}`,
+            Accept: 'application/vnd.github.diff'
+        }
+    }));
+    const code = response.data;
+    const files = parsePullRequestDiff(code);
+    core.debug(`diff files: ${files}`);
 
     if (content == fullReviewComment) {
-        // Get the content of the pull request
-        if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url, configWithProxy({}));
-            code = response.data;
-        }
-    
         // Extract the code from the pull request content
-        content = `Please anayze the code of the pull request, tell me if the change is good or is there a bug and explain the reason in ${language}:\n\n\`\`\`${code}\`\`\``;
+        content = promptTemplate.replace('${language}', language).replace('${code}', code);
     } else {
         content = content.substring(reviewCommentPrefix.length);
+        const fileNames = findFileNames(content);
+        core.debug(`found files name in commment: ${fileNames}`);
+        for (const fileName of fileNames) {
+            for (const key of Object.keys(files)) {
+                if (key.includes(fileName)) {
+                    core.debug(`replace \${file:${fileName}} with ${key}'s diff`);
+                    content = content.replace(`\${file:${fileName}}`, files[key]);
+                    break;
+                }
+            }
+        }
     }
+    content = content.substring(0, maxCodeLength);
 
     // Determine the programming language if it was not provided
     if (programmingLanguage == 'auto') {
-        // Get the content of the pull request
-        if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url, configWithProxy({}));
-            code = response.data;
-        }
         const detectedLanguage = detect(code);
         core.debug(`Detected programming language: ${detectedLanguage}`);
         programmingLanguage = detectedLanguage;
@@ -39259,7 +39274,7 @@ async function run() {
     core.debug(`content: ${content}`);
 
     // Call the OpenAI ChatGPT API to analyze the code
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+    response = await axios.post('https://api.openai.com/v1/chat/completions', {
         "model": "gpt-3.5-turbo",
         "messages": messages
     }, configWithProxy({
@@ -39269,20 +39284,62 @@ async function run() {
       }
     }));
 
-    core.debug(`openai response: ${response.data.choices[0].message.content}`);
+    const answer = response.data.choices[0].message.content;
+    core.debug(`openai response: ${answer}`);
 
     // Reply to the review comment with the OpenAI response
-    const octokit = github.getOctokit(githubToken);
+    const octokit = github.getOctokit(githubToken, {
+        baseUrl: githubBaseURL
+    });
     await octokit.rest.issues.createComment({
         owner: repoOwner,
         repo: repoName,
         issue_number: prNumber,
-        body: "Code Review: ".concat(response.data.choices[0].message.content)
+        body: answerTemplate.replace('${answer}', answer)
         // in_reply_to: comment.id
       });
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+function parsePullRequestDiff(diffContent) {
+    const files = {};
+    const diffLines = diffContent.split('\n');
+
+    let currentFile = null;
+    let currentLines = [];
+
+    for (const line of diffLines) {
+      if (line.startsWith('diff --git')) {
+        // Start of a new file
+        if (currentFile) {
+          files[currentFile] = currentLines.join('\n');
+        }
+        currentFile = line.substring('diff --git'.length + 1);
+        currentLines = [line];
+      } else {
+        // Add the line to the current file's diff
+        currentLines.push(line);
+      }
+    }
+
+    // Add the last file's diff
+    if (currentFile) {
+      files[currentFile] = currentLines.join('\n');
+    }
+
+    return files;
+}
+
+function findFileNames(str) {
+    const pattern = /\${file:([^{}]+)}/g;
+    const matches = str.matchAll(pattern);
+    const names = [];
+    for (const match of matches) {
+      names.push(match[1]);
+    }
+    return names;
 }
 
 run();

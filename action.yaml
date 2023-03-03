@@ -2,16 +2,16 @@ name: OpenAI ChatGPT Code Review
 description: A GitHub Action that uses OpenAI ChatGPT to review code in pull request.
 inputs:
   LANGUAGE:
-    description: 'The response language of the OpenAI ChatGPT API. Default is "English".'
+    description: 'The language for the OpenAI ChatGPT API response. Default is "English".'
     default: 'English'
   PROGRAMMING_LANGUAGE:
-    description: 'The programming language of the code in the GitHub repository. If not provided,the detected programming language will be used.'
+    description: 'The programming language used in the GitHub repository. If not provided, the detected programming language will be used.'
     default: ''
   FULL_REVIEW_COMMENT:
-    description: 'The comment to trigger code review for the pull request.'
+    description: 'The comment to trigger a code review for the pull request.'
     default: 'chatgpt'
   REVIEW_COMMENT_PREFIX:
-    description: 'The comment prefix to trigger code review with the comment content.'
+    description: 'The comment prefix to trigger a code review with the comment content.'
     default: 'chatgpt:'
   OPENAI_TOKEN:
     description: 'The API token for the OpenAI ChatGPT API.'
@@ -19,6 +19,19 @@ inputs:
   GITHUB_TOKEN:
     description: 'The API token for the Github API.'
     required: true
+  GITHUB_BASE_URL:
+    description: The base URL for the GitHub API.'
+  MAX_CODE_LENGTH:
+    description: 'The maximum code length for the pull request to be sent to OpenAI.'
+    default: 3000,
+    type: int
+  PROMPT_TEMPLATE:
+    description: 'The template for the FULL_REVIEW_COMMENT prompt.'
+    default: 'Please analyze the pull request's code and inform me whether it requires optimization, and provide a ${language} explanation for your decision:\n\n\```${code}```'
+  ANSWER_TEMPLATE:
+    description: 'The template for the answer sent to the GitHub comment.'
+    default: 'AI Code Review:\n\n${answer}'
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
