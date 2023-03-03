@@ -39193,6 +39193,7 @@ const httpsProxyAgent = __nccwpck_require__(81908);
 function configWithProxy(config) {
     var c = config || {};
     if (process.env.HTTPS_PROXY) {
+        core.debug(`use proxy: ${process.env.HTTPS_PROXY}`);
         c.proxy = false;
         c.httpsAgent = new httpsProxyAgent(process.env.HTTPS_PROXY);
         return c;
@@ -39236,12 +39237,13 @@ async function run() {
     var content = comment.body;
 
     const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
-    var response = await axios.get(url, configWithProxy({
+    core.debug(`diff url: ${url}`);
+    var response = await axios.get(url, {
         headers: {
             Authorization: `Bearer ${githubToken}`,
             Accept: 'application/vnd.github.diff'
         }
-    }));
+    });
     const code = response.data;
     const files = parsePullRequestDiff(code);
     core.debug(`diff files: ${files}`);
