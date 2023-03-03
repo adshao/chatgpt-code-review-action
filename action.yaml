@@ -23,16 +23,18 @@ inputs:
     description: The base URL for the GitHub API.'
   MAX_CODE_LENGTH:
     description: 'The maximum code length for the pull request to be sent to OpenAI.'
-    default: 3000,
+    default: 3000
     type: int
   PROMPT_TEMPLATE:
     description: 'The template for the FULL_REVIEW_COMMENT prompt.'
     default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide a ${language} explanation for your decision:
 
+
 \`\`\`${code}\`\`\`'
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
     default: 'AI Code Review:
+
 
 ${answer}'
 
