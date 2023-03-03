@@ -39190,15 +39190,13 @@ const axios = __nccwpck_require__(73565);
 const detect = __nccwpck_require__(46397);
 const httpsProxyAgent = __nccwpck_require__(81908);
 
-function configWithProxy(url) {
+function configWithProxy(config) {
     if (process.env.HTTPS_PROXY) {
-        return {
-            url: url,
-            proxy: false,
-            httpsAgent: new httpsProxyAgent(process.env.HTTPS_PROXY)
-        }
+        config.proxy = false;
+        config.httpsAgent = new httpsProxyAgent(process.env.HTTPS_PROXY);
+        return config;
     }
-    return url;
+    return config || {};
 }
 
 async function run() {
@@ -39228,7 +39226,7 @@ async function run() {
     if (content == fullReviewComment) {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(configWithProxy(issue.pull_request.diff_url));
+            const response = await axios.get(issue.pull_request.diff_url, configWithProxy());
             code = response.data;
         }
     
@@ -39242,7 +39240,7 @@ async function run() {
     if (programmingLanguage == 'auto') {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(configWithProxy(issue.pull_request.diff_url));
+            const response = await axios.get(issue.pull_request.diff_url, configWithProxy());
             code = response.data;
         }
         const detectedLanguage = detect(code);
@@ -39261,15 +39259,15 @@ async function run() {
     core.debug(`content: ${content}`);
 
     // Call the OpenAI ChatGPT API to analyze the code
-    const response = await axios.post(configWithProxy('https://api.openai.com/v1/chat/completions'), {
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         "model": "gpt-3.5-turbo",
         "messages": messages
-    }, {
+    }, configWithProxy({
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${openaiToken}`
       }
-    });
+    }));
 
     core.debug(`openai response: ${response.data.choices[0].message.content}`);
 
