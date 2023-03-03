@@ -1,3 +1,5 @@
+### Simplify code reviews, just say `chatgpt`!
+
 # OpenAI ChatGPT Code Review
 
 A GitHub Action that uses OpenAI ChatGPT to analyze code in pull request review comments.
@@ -65,6 +67,13 @@ This workflow runs the `OpenAI ChatGPT Code Review` action when a pull request c
 * If the comment starts with `chatgpt:` and is sent by `adshao`, the workflow will be triggered.
 
 * If the comment is exactly `chatgpt`, it will trigger a code review for the diff of the pull request.
+
+![demo](https://pbs.twimg.com/media/FqOsplnaMAERrgP?format=jpg&name=large)
+
+
+## More Examples
+
+`go-binance`: https://github.com/adshao/go-binance/pull/461#issuecomment-1452922849
 
 ## License
 
