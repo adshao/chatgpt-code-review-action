@@ -40,7 +40,7 @@ async function run() {
     if (content == fullReviewComment) {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url, configWithProxy());
+            const response = await axios.get(issue.pull_request.diff_url, configWithProxy({}));
             code = response.data;
         }
     
@@ -54,7 +54,7 @@ async function run() {
     if (programmingLanguage == 'auto') {
         // Get the content of the pull request
         if (!code) {
-            const response = await axios.get(issue.pull_request.diff_url, configWithProxy());
+            const response = await axios.get(issue.pull_request.diff_url, configWithProxy({}));
             code = response.data;
         }
         const detectedLanguage = detect(code);
