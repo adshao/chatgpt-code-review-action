@@ -6,10 +6,10 @@ const httpsProxyAgent = require('https-proxy-agent');
 
 function configWithProxy(config) {
     var c = config || {};
-    if (process.env.HTTPS_PROXY) {
-        core.debug(`use proxy: ${process.env.HTTPS_PROXY}`);
+    if (process.env.OPENAI_PROXY) {
+        core.debug(`use proxy: ${process.env.OPENAI_PROXY}`);
         c.proxy = false;
-        c.httpsAgent = new httpsProxyAgent(process.env.HTTPS_PROXY);
+        c.httpsAgent = new httpsProxyAgent(process.env.OPENAI_PROXY);
         return c;
     }
     return c;
@@ -59,6 +59,7 @@ async function run() {
         }
     });
     const code = response.data;
+    core.debug(`diff code: ${code}`);
     const files = parsePullRequestDiff(code);
     core.debug(`diff files: ${files}`);
 
