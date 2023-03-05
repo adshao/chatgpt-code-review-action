@@ -39,11 +39,10 @@ async function run() {
     core.debug(`answerTemplate: ${answerTemplate}`);
 
     // Get information about the pull request review
-    const issue = github.context.payload.issue;
     const comment = github.context.payload.comment;
     const repoName = github.context.payload.repository.name;
     const repoOwner = github.context.payload.repository.owner.login;
-    const prNumber = issue.number;
+    const prNumber = github.context.payload.number || github.context.payload.issue.number; // get number from a pull request event or comment event
 
     // Get the code to analyze from the review comment
     var content = comment && comment.body || "";
