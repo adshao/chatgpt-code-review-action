@@ -27,7 +27,9 @@ inputs:
     default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide an explanation for your decision:
 
 
-\`\`\`${code}\`\`\`'
+\`\`\`
+${code}
+\`\`\`'
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
     default: 'AI Code Review:
