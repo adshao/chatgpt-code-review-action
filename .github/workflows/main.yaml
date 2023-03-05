@@ -9,9 +9,9 @@ on:
 jobs:
   code-review:
     if: |
-    github.event_name == 'pull_request' ||
-      (github.event.comment.user.login == 'adshao' &&
-        startsWith(github.event.comment.body, 'chatgpt'))
+      github.event_name == 'pull_request' ||
+        (github.event.comment.user.login == 'adshao' &&
+          startsWith(github.event.comment.body, 'chatgpt'))
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
