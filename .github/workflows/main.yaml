@@ -1,12 +1,17 @@
 name: Code Review
 
 on:
+  pull_request:
+    types: [opened]
   issue_comment:
     types: [created, edited]
 
 jobs:
   code-review:
-    if: github.event.comment.user.login == 'adshao' && startsWith(github.event.comment.body, 'chatgpt')
+    if: |
+    github.event_name == 'pull_request' ||
+      (github.event.comment.user.login == 'adshao' &&
+        startsWith(github.event.comment.body, 'chatgpt'))
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -15,7 +20,6 @@ jobs:
     - name: OpenAI ChatGPT Code Review
       uses: ./
       with:
-        LANGUAGE: 'English'
         PROGRAMMING_LANGUAGE: 'JavaScript'
         REVIEW_COMMENT_PREFIX: 'chatgpt:'
         FULL_REVIEW_COMMENT: 'chatgpt'

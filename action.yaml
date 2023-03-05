@@ -1,9 +1,6 @@
 name: OpenAI ChatGPT Code Review
 description: A GitHub Action that uses OpenAI ChatGPT to review code in pull request.
 inputs:
-  LANGUAGE:
-    description: 'The language for the OpenAI ChatGPT API response. Default is "English".'
-    default: 'English'
   PROGRAMMING_LANGUAGE:
     description: 'The programming language used in the GitHub repository. If not provided, the detected programming language will be used.'
     default: ''
@@ -23,11 +20,11 @@ inputs:
     description: The base URL for the GitHub API.'
   MAX_CODE_LENGTH:
     description: 'The maximum code length for the pull request to be sent to OpenAI.'
-    default: 3000
+    default: 6000
     type: int
   PROMPT_TEMPLATE:
     description: 'The template for the FULL_REVIEW_COMMENT prompt.'
-    default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide a ${language} explanation for your decision:
+    default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide an explanation for your decision:
 
 
 \`\`\`${code}\`\`\`'

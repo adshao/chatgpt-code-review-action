@@ -18,7 +18,6 @@ function configWithProxy(config) {
 async function run() {
   try {
     // Get input values
-    const language = core.getInput('LANGUAGE');
     const programmingLanguage = core.getInput('PROGRAMMING_LANGUAGE');
     const openaiToken = core.getInput('OPENAI_TOKEN');
     const fullReviewComment = core.getInput('FULL_REVIEW_COMMENT');
@@ -29,7 +28,6 @@ async function run() {
     const maxCodeLength = core.getInput('MAX_CODE_LENGTH');
     const answerTemplate = core.getInput('ANSWER_TEMPLATE');
 
-    core.debug(`language: ${language}`);
     core.debug(`programmingLanguage: ${programmingLanguage}`);
     core.debug(`openaiToken length: ${openaiToken.length}`);
     core.debug(`fullReviewComment: ${fullReviewComment}`);
@@ -48,7 +46,7 @@ async function run() {
     const prNumber = issue.number;
 
     // Get the code to analyze from the review comment
-    var content = comment.body;
+    var content = comment && comment.body || "";
 
     const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
     core.debug(`diff url: ${url}`);
@@ -63,11 +61,12 @@ async function run() {
     const files = parsePullRequestDiff(code);
     core.debug(`diff files: ${files}`);
 
-    if (content == fullReviewComment) {
+    if (!content || content == fullReviewComment) {
         // Extract the code from the pull request content
-        content = promptTemplate.replace('${language}', language).replace('${code}', code);
+        content = promptTemplate.replace('${code}', code);
     } else {
         content = content.substring(reviewCommentPrefix.length);
+        content = content.replace('${code}', code);
         const fileNames = findFileNames(content);
         core.debug(`found files name in commment: ${fileNames}`);
         for (const fileName of fileNames) {
