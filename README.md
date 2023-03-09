@@ -75,18 +75,45 @@ jobs:
 
 This workflow runs the `OpenAI ChatGPT Code Review` action when a pull request comment is created or edited. The action uses the `PROGRAMMING_LANGUAGE`, `FULL_REVIEW_COMMENT`, `REVIEW_COMMENT_PREFIX`, `OPENAI_TOKEN` and `GITHUB_TOKEN` input values to analyze the code in the pull request comment.
 
-* If the comment starts with `chatgpt:` and is sent by `adshao`, the workflow will be triggered.
+You can also trigger github action when a pull request opened.
 
-* If the comment is exactly `chatgpt`, it will trigger a code review for the diff of the pull request.
+## Github
 
-* You can also trigger github action when a pull request opened.
+### Code Review for PR
+
+If a comment exactly matches `chatgpt`, a code review will be triggered for the pull request's diff.
+
+Note that only the first 6000 characters of code will be used due to the token limit of the OpenAI API.
+
+### Code Review for a specific file
+
+If a comment starts with `chatgpt:`, you can use it to communicate with ChatGPT just like you would in the official interface.
+
+To reference the diff code of the pull request in your comment, use ${code}:
+
+```
+chatgpt: Please explain the usage of the `getPrCode` function:
+
+${code}
+```
+
+To reference the diff code of a specific file in the pull request, use ${file:filename}:
+
+```
+chatgpt: Can you check if there are any bugs in the following code?
+
+${file:dist/index.js}
+```
+
+## Screenshots
 
 ![demo](https://pbs.twimg.com/media/FqOsplnaMAERrgP?format=jpg&name=large)
 
+![code_review_for_file](https://pbs.twimg.com/media/FqvwanLaIAAd2l6?format=jpg&name=large)
 
 ## More Examples
 
-`go-binance`: https://github.com/adshao/go-binance/pull/461#issuecomment-1452922849
+`go-binance`: https://github.com/adshao/go-binance/pull/461#issuecomment-1452922686
 
 ## License
 
