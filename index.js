@@ -4,17 +4,6 @@ const axios = require('axios');
 const detect = require('language-detect');
 const httpsProxyAgent = require('https-proxy-agent');
 
-function configWithProxy(config) {
-    var c = config || {};
-    if (process.env.OPENAI_PROXY) {
-        core.debug(`use proxy: ${process.env.OPENAI_PROXY}`);
-        c.proxy = false;
-        c.httpsAgent = new httpsProxyAgent(process.env.OPENAI_PROXY);
-        return c;
-    }
-    return c;
-}
-
 async function run() {
   try {
     // Get input values
